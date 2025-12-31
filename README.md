@@ -24,7 +24,7 @@ gcloud iam service-accounts add-iam-policy-binding \
 Add annotate:
 
 kubectl annotate serviceaccount gke-cloudsql-sa \
-  iam.gke.io/gcp-service-account=gke-cloudsql-sa@ayush-1008.iam.gserviceaccount.com
+  iam.gke.io/gcp-service-account=gke-cloudsql-sa@<project-id>.iam.gserviceaccount.com
 
 Update your Deployment YAML: 
 
@@ -32,6 +32,7 @@ spec:
   serviceAccountName: gke-cloudsql-sa #upadte the gke-sa name here
   containers:
   - name: app
+    
     image: your-image
 
 
