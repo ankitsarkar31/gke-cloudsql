@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: app-sa
+  annotations:
+    iam.gke.io/gcp-service-account: 91458399268-compute@ayush-1008.iam.gserviceaccount.com
+

@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-login-app
+  labels:
+    app: flask-login
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flask-login
+  template:
+    metadata:
+      labels:
+        app: flask-login
+    spec:
+      # 🔑 REQUIRED for Workload Identity
+      serviceAccountName: gke-cloudsql-sa
+
+      containers:
+      # -----------------------------
+      # Flask Application Container
+      # -----------------------------
+      - name: flask-app
+        image: us-central1-docker.pkg.dev/ayush-1008/my-repo/app-login/app-new:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 8080
+        env:
+          - name: DB_HOST
+            value: "127.0.0.1"
+          - name: DB_USER
+            value: "root"
+          - name: DB_NAME
+            value: "users"
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: password
+
+      # -----------------------------
+      # Cloud SQL Auth Proxy (v2)
+      # -----------------------------
+      - name: cloud-sql-proxy
+        image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.0
+        args:
+          - "--address=127.0.0.1"
+          - "--port=3306"
+          - "ayush-1008:us-central1:demo"
+
+
