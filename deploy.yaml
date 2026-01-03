@@ -22,7 +22,7 @@ spec:
       # Flask Application Container
       # -----------------------------
       - name: flask-app
-        image: us-central1-docker.pkg.dev/ayush-1008/my-repo/app-login/app-new:latest
+        image: us-central1-docker.pkg.dev/[project-id]/my-repo/app-login/app-new:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 8080
@@ -75,6 +75,6 @@ spec:
         args:
           - "--address=127.0.0.1"
           - "--port=3306"
-          - "ayush-1008:us-central1:demo"
+          - "<project-id>:us-central1:demo"
 
 
