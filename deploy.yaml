@@ -26,6 +26,23 @@ spec:
         imagePullPolicy: Always
         ports:
           - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /login
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /login
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 2
+          failureThreshold: 3
         env:
           - name: DB_HOST
             value: "127.0.0.1"
@@ -35,9 +52,20 @@ spec:
             value: "users"
           - name: DB_PASSWORD
             valueFrom:
-              secretKeyRef:
-                name: db-secret
-                key: password
+             secretKeyRef:
+               name: mysql-k8s-secret
+               key: MYSQL_PASSWORD
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets"
+          readOnly: true
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: mysql-secret
 
       # -----------------------------
       # Cloud SQL Auth Proxy (v2)
